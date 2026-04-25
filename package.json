@@ -1,0 +1,23 @@
+{
+  "name": "kinetic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "server": "uvicorn server:app --host 0.0.0.0 --port 8000 --reload"
+  },
+  "dependencies": {
+    "expo": "latest",
+    "expo-av": "latest",
+    "expo-camera": "latest",
+    "expo-constants": "latest",
+    "expo-file-system": "latest",
+    "react": "latest",
+    "react-native": "latest"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@types/react": "latest",
+    "typescript": "latest"
+  }
+}

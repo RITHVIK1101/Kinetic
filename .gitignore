@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Environment — never commit API keys
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# YOLO model weights — auto-downloaded on first server start, too large for git
+*.pt
+*.onnx
+*.tflite
+*.npy
+yolo26n_saved_model/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Kinetic",
+    "slug": "kinetic",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "com.kinetic.app",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Kinetic uses the camera for real-time object detection.",
+        "NSMicrophoneUsageDescription": "Kinetic uses the microphone for audio playback.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Kinetic uses the camera for real-time object detection."
+        }
+      ]
+    ],
+    "assetBundlePatterns": ["**/*"],
+    "splash": { "backgroundColor": "#000000" },
+    "extra": {
+      "eas": {
+        "projectId": "9e54824b-a308-4336-a23d-b2746e4ba0ef"
+      }
+    }
+  }
+}
