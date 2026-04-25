@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "expo": "latest",
+    "expo-asset": "latest",
     "expo-av": "latest",
     "expo-camera": "latest",
     "expo-constants": "latest",
