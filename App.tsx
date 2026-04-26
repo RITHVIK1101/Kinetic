@@ -20,7 +20,7 @@ export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const [frameSize, setFrameSize] = useState({ width: 1, height: 1 });
 
-  const { scan, scanState, lastResult, errorMessage } = useScan(cameraRef, cameraCapturing);
+  const { scan, cancelSpeech, scanState, lastResult, errorMessage } = useScan(cameraRef, cameraCapturing);
   const isScanIdle = scanState === 'idle';
 
   const { detections, isConnected, inferenceMs } = useObjectDetection(
@@ -79,13 +79,13 @@ export default function App() {
 
       {/* SCAN button */}
       <TouchableOpacity
-        style={[styles.scanButton, scanState !== 'idle' && styles.scanButtonDisabled]}
-        onPress={scan}
-        disabled={scanState !== 'idle'}
+        style={[styles.scanButton, (scanState !== 'idle' && scanState !== 'speaking') && styles.scanButtonDisabled]}
+        onPress={scanState === 'speaking' ? cancelSpeech : scan}
+        disabled={scanState !== 'idle' && scanState !== 'speaking'}
         activeOpacity={0.75}
       >
         <Text style={styles.scanButtonText}>
-          {scanState === 'idle' ? 'SCAN' : scanState.toUpperCase()}
+          {scanState === 'idle' ? 'SCAN' : scanState === 'speaking' ? 'STOP' : scanState.toUpperCase()}
         </Text>
       </TouchableOpacity>
     </View>

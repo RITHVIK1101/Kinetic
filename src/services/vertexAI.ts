@@ -5,7 +5,7 @@ const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 interface GemmaResponse {
   candidates: Array<{
     content: {
-      parts: Array<{ text: string }>;
+      parts: Array<{ text?: string; thought?: boolean }>;
     };
   }>;
 }
@@ -59,5 +59,7 @@ export async function analyzeImageWithGemma(base64Jpeg: string): Promise<string>
   }
 
   const json: GemmaResponse = await response.json();
-  return json.candidates?.[0]?.content?.parts?.[0]?.text ?? 'No description available.';
+  const parts = json.candidates?.[0]?.content?.parts ?? [];
+  const textPart = parts.find(p => !p.thought && p.text);
+  return textPart?.text ?? 'No description available.';
 }

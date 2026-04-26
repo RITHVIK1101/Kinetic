@@ -15,6 +15,13 @@ export function useScan(
   const [lastResult, setLastResult] = useState<ScanResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const isScanning = useRef(false);
+  const speechResolveRef = useRef<(() => void) | null>(null);
+  const activeSoundRef = useRef<Audio.Sound | null>(null);
+
+  const cancelSpeech = useCallback(() => {
+    activeSoundRef.current?.stopAsync();
+    speechResolveRef.current?.();
+  }, []);
 
   const scan = useCallback(async () => {
     if (isScanning.current || !cameraRef.current) return;
@@ -22,7 +29,6 @@ export function useScan(
     setErrorMessage(null);
 
     let speechUri: string | null = null;
-    let speechSound: Audio.Sound | null = null;
 
     try {
       // 1. Wait for any in-progress detection capture to finish
@@ -53,11 +59,15 @@ export function useScan(
         { uri: speechUri },
         { shouldPlay: true },
       );
-      speechSound = sound;
+      activeSoundRef.current = sound;
 
       await new Promise<void>((resolve) => {
+        speechResolveRef.current = resolve;
         sound.setOnPlaybackStatusUpdate((status) => {
-          if ('didJustFinish' in status && status.didJustFinish) resolve();
+          if ('didJustFinish' in status && status.didJustFinish) {
+            speechResolveRef.current = null;
+            resolve();
+          }
         });
       });
     } catch (e: unknown) {
@@ -66,13 +76,15 @@ export function useScan(
       setErrorMessage(msg);
       setScanState('error');
     } finally {
+      speechResolveRef.current = null;
+      activeSoundRef.current?.unloadAsync();
+      activeSoundRef.current = null;
       cameraCapturing.current = false;
-      speechSound?.unloadAsync();
       if (speechUri) FileSystem.deleteAsync(speechUri, { idempotent: true });
       setScanState('idle');
       isScanning.current = false;
     }
   }, [cameraRef, cameraCapturing]);
 
-  return { scan, scanState, lastResult, errorMessage };
+  return { scan, cancelSpeech, scanState, lastResult, errorMessage };
 }
