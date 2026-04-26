@@ -1,13 +1,16 @@
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import type { RefObject } from 'react';
 import type { CameraView } from 'expo-camera';
 import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import type { ScanState, ScanResult } from '../types';
 import { analyzeImageWithGemma } from '../services/vertexAI';
 import { synthesizeSpeech } from '../services/elevenLabs';
 
-export function useScan(cameraRef: RefObject<CameraView>) {
+export function useScan(
+  cameraRef: RefObject<CameraView>,
+  cameraCapturing: React.MutableRefObject<boolean>,
+) {
   const [scanState, setScanState] = useState<ScanState>('idle');
   const [lastResult, setLastResult] = useState<ScanResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -22,8 +25,13 @@ export function useScan(cameraRef: RefObject<CameraView>) {
     let speechSound: Audio.Sound | null = null;
 
     try {
-      // 1. Capture a full-quality photo
+      // 1. Wait for any in-progress detection capture to finish
       setScanState('capturing');
+      await new Promise<void>((resolve) => {
+        const check = () => (cameraCapturing.current ? setTimeout(check, 50) : resolve());
+        check();
+      });
+      cameraCapturing.current = true;
       const photo = await cameraRef.current.takePictureAsync({
         base64: true,
         quality: 0.85,
@@ -54,15 +62,17 @@ export function useScan(cameraRef: RefObject<CameraView>) {
       });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
+      console.error('[useScan]', e);
       setErrorMessage(msg);
       setScanState('error');
     } finally {
+      cameraCapturing.current = false;
       speechSound?.unloadAsync();
       if (speechUri) FileSystem.deleteAsync(speechUri, { idempotent: true });
       setScanState('idle');
       isScanning.current = false;
     }
-  }, [cameraRef]);
+  }, [cameraRef, cameraCapturing]);
 
   return { scan, scanState, lastResult, errorMessage };
 }

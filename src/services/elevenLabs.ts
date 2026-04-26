@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID } from '../config/constants';
 
 const BASE_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
@@ -23,7 +23,7 @@ export async function synthesizeSpeech(text: string): Promise<string> {
     },
     body: JSON.stringify({
       text,
-      model_id: 'eleven_multilingual_v2',
+      model_id: 'eleven_turbo_v2_5',
       voice_settings: {
         stability: 0.5,
         similarity_boost: 0.75,
@@ -44,7 +44,7 @@ export async function synthesizeSpeech(text: string): Promise<string> {
   const localUri = `${FileSystem.cacheDirectory}kinetic_speech_${Date.now()}.mp3`;
 
   await FileSystem.writeAsStringAsync(localUri, base64, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
 
   return localUri;

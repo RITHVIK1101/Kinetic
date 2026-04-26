@@ -1,18 +1,23 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { RefObject } from 'react';
 import type { CameraView } from 'expo-camera';
 import type { Detection } from '../types';
 import { API_URL, DETECTION_INTERVAL_MS, DETECTION_IMAGE_QUALITY, CONFIDENCE_THRESHOLD } from '../config/constants';
 
-export function useObjectDetection(cameraRef: RefObject<CameraView>, active: boolean) {
+export function useObjectDetection(
+  cameraRef: RefObject<CameraView>,
+  active: boolean,
+  cameraCapturing: React.MutableRefObject<boolean>,
+) {
   const [detections, setDetections] = useState<Detection[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [inferenceMs, setInferenceMs] = useState(0);
   const isCapturing = useRef(false);
 
   const detect = useCallback(async () => {
-    if (isCapturing.current || !cameraRef.current || !active) return;
+    if (isCapturing.current || cameraCapturing.current || !cameraRef.current || !active) return;
     isCapturing.current = true;
+    cameraCapturing.current = true;
 
     try {
       const photo = await cameraRef.current.takePictureAsync({
@@ -39,13 +44,15 @@ export function useObjectDetection(cameraRef: RefObject<CameraView>, active: boo
       setDetections(data.detections ?? []);
       setInferenceMs(data.inferenceMs ?? 0);
       setIsConnected(true);
-    } catch {
+    } catch (e) {
+      console.error('[useObjectDetection]', e);
       setIsConnected(false);
       setDetections([]);
     } finally {
       isCapturing.current = false;
+      cameraCapturing.current = false;
     }
-  }, [cameraRef, active]);
+  }, [cameraRef, active, cameraCapturing]);
 
   useEffect(() => {
     if (!active) {

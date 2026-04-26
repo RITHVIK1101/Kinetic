@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, MutableRefObject } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -16,15 +16,17 @@ import { useScan } from './src/hooks/useScan';
 
 export default function App() {
   const cameraRef = useRef<CameraView>(null);
+  const cameraCapturing = useRef(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [frameSize, setFrameSize] = useState({ width: 1, height: 1 });
 
-  const { scan, scanState, lastResult, errorMessage } = useScan(cameraRef);
+  const { scan, scanState, lastResult, errorMessage } = useScan(cameraRef, cameraCapturing);
   const isScanIdle = scanState === 'idle';
 
   const { detections, isConnected, inferenceMs } = useObjectDetection(
     cameraRef,
     isScanIdle,
+    cameraCapturing,
   );
 
   useProximityAlert(detections, isScanIdle);
