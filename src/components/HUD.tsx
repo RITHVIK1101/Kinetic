@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   descriptionBox: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 120,
     left: 16,
     right: 16,
     backgroundColor: 'rgba(0,0,0,0.7)',
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   errorBox: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 120,
     left: 16,
     right: 16,
     backgroundColor: 'rgba(200,0,0,0.75)',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   hintBox: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 120,
     alignSelf: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 16,

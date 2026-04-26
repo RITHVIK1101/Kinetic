@@ -7,18 +7,19 @@
     "server": "uvicorn server:app --host 0.0.0.0 --port 8000 --reload"
   },
   "dependencies": {
-    "expo": "latest",
-    "expo-asset": "latest",
-    "expo-av": "latest",
-    "expo-camera": "latest",
-    "expo-constants": "latest",
-    "expo-file-system": "latest",
-    "react": "latest",
-    "react-native": "latest"
+    "babel-preset-expo": "~54.0.10",
+    "expo": "~54.0.0",
+    "expo-asset": "~12.0.12",
+    "expo-av": "~15.0.2",
+    "expo-camera": "~17.0.10",
+    "expo-constants": "~18.0.13",
+    "expo-file-system": "~19.0.21",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   },
   "devDependencies": {
     "@babel/core": "latest",
-    "@types/react": "latest",
+    "@types/react": "~19.1.10",
     "typescript": "latest"
   }
 }

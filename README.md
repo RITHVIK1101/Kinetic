@@ -38,8 +38,7 @@ Tap SCAN → full-quality photo ───→ Google Gemma 4 (direct)
 
 ```bash
 # Install JS dependencies
-npm install
-
+npm install --legacy-peer-deps
 # Install Python dependencies
 pip install -r requirements.txt
 ```
