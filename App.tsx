@@ -23,13 +23,13 @@ export default function App() {
   const { scan, cancelSpeech, scanState, lastResult, errorMessage } = useScan(cameraRef, cameraCapturing);
   const isScanIdle = scanState === 'idle';
 
-  const { detections, isConnected, inferenceMs } = useObjectDetection(
+  const { detections, isConnected, inferenceMs, depthProximity } = useObjectDetection(
     cameraRef,
     isScanIdle,
     cameraCapturing,
   );
 
-  useProximityAlert(detections, isScanIdle);
+  useProximityAlert(detections, isScanIdle, depthProximity);
 
   if (!permission) return <View style={styles.root} />;
 

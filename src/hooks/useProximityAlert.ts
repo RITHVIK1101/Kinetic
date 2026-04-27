@@ -5,7 +5,7 @@ import { PROXIMITY_LEVELS } from '../config/constants';
 import { maxDetectionArea } from '../utils/yolo26Utils';
 import { generateBeepDataURI } from '../utils/beepUtils';
 
-export function useProximityAlert(detections: Detection[], enabled: boolean) {
+export function useProximityAlert(detections: Detection[], enabled: boolean, depthProximity: number = 0) {
   const soundRef = useRef<Audio.Sound | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentLevelRef = useRef<ProximityLevel>('none');
@@ -54,7 +54,15 @@ export function useProximityAlert(detections: Detection[], enabled: boolean) {
       return;
     }
 
-    const area = maxDetectionArea(detections);
+    const yoloArea = maxDetectionArea(detections);
+
+    // Convert depth proximity (0-1) to an equivalent area score
+    // so it feeds into the same proximity level thresholds.
+    // depth 1.0 maps to area 0.35 (critical), depth 0.0 maps to area 0.0
+    const depthArea = depthProximity * 0.35;
+
+    // Use whichever is higher — YOLO object or depth surface
+    const area = Math.max(yoloArea, depthArea);
     const level = getProximityLevel(area);
 
     if (level === currentLevelRef.current) return; // no change, keep existing timer

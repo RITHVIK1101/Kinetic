@@ -12,6 +12,7 @@ export function useObjectDetection(
   const [detections, setDetections] = useState<Detection[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [inferenceMs, setInferenceMs] = useState(0);
+  const [depthProximity, setDepthProximity] = useState(0);
   const isCapturing = useRef(false);
 
   const detect = useCallback(async () => {
@@ -43,6 +44,8 @@ export function useObjectDetection(
       const data = await response.json();
       setDetections(data.detections ?? []);
       setInferenceMs(data.inferenceMs ?? 0);
+      // Pass depth proximity back alongside detections
+      setDepthProximity(data.depthProximity ?? 0);
       setIsConnected(true);
     } catch (e) {
       console.error('[useObjectDetection]', e);
@@ -63,5 +66,5 @@ export function useObjectDetection(
     return () => clearInterval(interval);
   }, [detect, active]);
 
-  return { detections, isConnected, inferenceMs };
+  return { detections, isConnected, inferenceMs, depthProximity };
 }
